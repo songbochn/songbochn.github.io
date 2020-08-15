@@ -103,4 +103,7 @@ theme: landscape
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: ''
+  type: git
+  repo: https://github.com/songbochn/songbochn.github.io
+  branch: master
+  message: '站点更新: {{ now("YYYY-MM-DD HH:mm:ss") }})'
