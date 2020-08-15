@@ -105,5 +105,5 @@ theme: landscape
 deploy:
   type: git
   repo: https://github.com/songbochn/songbochn.github.io
-  branch: master
+  branch: gh-pages
   message: '站点更新: {{ now("YYYY-MM-DD HH:mm:ss") }})'
