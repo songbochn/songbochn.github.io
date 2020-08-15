@@ -1,2 +1,2 @@
-# songbochn.github.io
-github博客
+# blog
+博客文章记录
