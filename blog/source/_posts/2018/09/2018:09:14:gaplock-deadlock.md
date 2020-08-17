@@ -1,7 +1,7 @@
 ---
 title: mysql-gap锁引发死锁原因探寻
 date: 2018-09-14 14:56:18
-tag: 
+tag:
 	- mysql
 	- deadlock
 	- lock
@@ -18,6 +18,7 @@ catergory:
 show engine innodb status;
 ```
 查询死锁信息.
+<!--more-->
 
 ```mysql
 ------------------------
@@ -94,7 +95,7 @@ RECORD LOCKS space id 229883 page no 4 n bits 680 index uk_date_subject of table
 | ---------- | ------------------------------------------------------------------------ | ------------------------------------------- | --------------------------------------------------- | ---- |
 | 8419693033 | insert into subject_ledger (subject_code, xxx,<br/>xxx, xxx, xxx,<br>xxx, xxx, xxx,<br>xxx, xxx, xxx,<br>accounting_date, xxx, xxx,<br>xxx)<br>values (1122010120, xxx,<br>xxx, xxx,<br>xxx,<br>xxx, xxx,xxx,<br>xxx, xxx, xxx,<br>'2018-09-13 00:00:00', xxx, xxx, xxx<br>) |                                             | 共享临键锁<br>（LOCK X \|LOCK_ORNIDARY)             |      |
 | 8419693029 | insert into subject_ledger (subject_code, xxx,<br/>xxx, xxx,xxx,<br>xxx, xxx, xxx,<br>xxx, xxx, xxx,<br>accounting_date, xxx, xxx,<br>xxx)<br>values (22410104, xxx,<br>xxx, xxx,<br>xxx,<br>xxx, xxx, xxx,<br>xxx, xxx, xxx,<br>'2018-09-13 00:00:00',xxx, xxx, xxx<br>) | 记录排他锁<br>（LOCK X \|LOCK_REC_NOT_GAP） | 插入意向排他锁<br>（LOCK X \|LOCK_INSERT_INTENTION) |      |
-                                                         
+
 分析记录如下：
 
 | 事务一                                                       | 事务二                                                       | 分析                                                         | 备注 |
@@ -114,17 +115,17 @@ RECORD LOCKS space id 229883 page no 4 n bits 680 index uk_date_subject of table
 由于事务二已经取得这条记录的X锁，事务一在重复插入这条记录的时候，Mysql会检测到潜在唯一键冲突，因此会加上S锁，保证这条记录不被别人修改，然后进行判定。这是官方文档介绍:
 
 ```mysql
-INSERT sets an exclusive lock on the inserted row. This lock is an index-record lock, 
+INSERT sets an exclusive lock on the inserted row. This lock is an index-record lock,
 not a next-key lock (that is, there is no gap lock) and does not prevent other sessions from inserting into the gap before the inserted row.
 
-Prior to inserting the row, a type of gap lock called an insert intention gap lock is set. 
-This lock signals the intent to insert in such a way that multiple transactions inserting into the same index gap need not wait for each other 
+Prior to inserting the row, a type of gap lock called an insert intention gap lock is set.
+This lock signals the intent to insert in such a way that multiple transactions inserting into the same index gap need not wait for each other
 if they are not inserting at the same position within the gap. Suppose that there are index records with values of 4 and 7. Separate transactions
-that attempt to insert values of 5 and 6 each lock the gap between 4 and 7 with insert intention locks prior to obtaining the exclusive lock 
+that attempt to insert values of 5 and 6 each lock the gap between 4 and 7 with insert intention locks prior to obtaining the exclusive lock
 on the inserted row, but do not block each other because the rows are nonconflicting.
 
-If a duplicate-key error occurs, a shared lock on the duplicate index record is set. 
-This use of a shared lock can result in deadlock should there be multiple sessions trying to insert the same row if another session 
+If a duplicate-key error occurs, a shared lock on the duplicate index record is set.
+This use of a shared lock can result in deadlock should there be multiple sessions trying to insert the same row if another session
 already has an exclusive lock. This can occur if another session deletes the row. Suppose that an InnoDB table t1 has the following structure:
 ```
 
@@ -143,7 +144,7 @@ An insert intention lock is a type of gap lock set by INSERT operations prior to
 按理说不会冲突才对，但是官方文档如下
 
 ```mysql
-Gap locks in InnoDB are “purely inhibitive”, which means that their only purpose is to prevent other transactions from inserting to the gap. 
+Gap locks in InnoDB are “purely inhibitive”, which means that their only purpose is to prevent other transactions from inserting to the gap.
 Gap locks can co-exist. A gap lock taken by one transaction does not prevent another transaction from taking a gap lock on the same gap.
 There is no difference between shared and exclusive gap locks. They do not conflict with each other, and they perform the same function.
 ```
