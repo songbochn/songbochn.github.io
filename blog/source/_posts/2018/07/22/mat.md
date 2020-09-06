@@ -1,11 +1,12 @@
 ---
-title: MAT工具
+title: MAT工具介绍及使用
+toc: true
 date: 2018-07-22 20:00:23
-tag: 
+tag:
 	- 内存分析
 	- 工具
-category: 
-	- jvm常用工具
+categories:
+	- 体验
 ---
 
 #### 安装
@@ -18,7 +19,7 @@ category:
 
 添加目标地址 （写在-vagx前）
 
--data 
+-data
 
 /地址
 

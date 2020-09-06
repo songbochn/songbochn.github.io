@@ -1,9 +1,12 @@
 ---
 title: 如何在mac上搭建tmux并进行系统化配置
 date: 2018-07-06 19:16:27
-tag: 
+toc: true
+tag:
 	- 终端
 	- bash
+categories:
+    - 体验
 ---
 平常使用终端的时候，需要开各种各样的窗口。不但使得桌面杂乱无章，而且一点也不酷。我就想肯定有更帅气的解决方案，在网上搜了下果然发现个神器tmux，想入坑命令行的同学看过来。网上各种博客上的资料比较杂乱，这里做一个系统化的汇总。
 
@@ -71,7 +74,7 @@ bind-key r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded"
 ####参考资料
 https://zanshin.net/2014/12/27/changing-my-tmux-command-prefix-to-tic/
 
-	
+
 [tmux]:https://www.youtube.com/watch?v=nD6g-rM5Bh0
 [shortkey]:https://tmuxcheatsheet.com/
 [tmuxteach]:https://minimul.com/teaches/tmux

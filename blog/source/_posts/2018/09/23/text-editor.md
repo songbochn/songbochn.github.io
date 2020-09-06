@@ -1,13 +1,12 @@
 ---
-title: 用sublime写markdown，多款编辑器使用后的归属
+title: 用sublime写markdown，飞一般的体验
 date: 2018-09-23 02:43:12
 toc: true
 tag:
     - 编辑器
     - 效率工具
 categories:
-    - [效率工具,编辑器]
-    - [文本,编辑]
+    - 体验
 ---
 
 #### 前言

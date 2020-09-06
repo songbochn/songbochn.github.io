@@ -1,10 +1,11 @@
 ---
 title: 博客迁移到gitpages上(一)
+toc: true
 tags:
   - hexo
   - gitpages
 categories:
-  - 写作
+  - 体验
 date: 2017-09-27 21:29:58
 ---
 #### 前言

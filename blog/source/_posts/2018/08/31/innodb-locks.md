@@ -1,10 +1,13 @@
 ---
 title: innodb锁类型(翻译自官网5.7版本)
 date: 2018-08-31 17:34:05
-tag: 
+toc: true
+tag:
 	- mysql
 	- innodb
 	- lock
+categories:
+    - 阅读
 ---
 
 ## 共享锁与排它锁
@@ -21,7 +24,7 @@ InnoDB实现了标准行级锁，有两种类型共享锁（S锁）和排他锁�
 
 - T2请求X锁不会被立即授予。
 
-如果事务T1持有第 r 行的X锁，从不同的事务T2发起对 r 行任意锁类型的请求不会被立即授予。相反，事务T2不得不等待T1释放掉它持有在第 r 
+如果事务T1持有第 r 行的X锁，从不同的事务T2发起对 r 行任意锁类型的请求不会被立即授予。相反，事务T2不得不等待T1释放掉它持有在第 r
 <!--more-->
 行的锁 （即X锁，译者注）
 
@@ -72,7 +75,7 @@ TABLE LOCK table `test`.`t` trx id 10080 lock mode IX
 对于一个行锁的事务数据展示和通过SHOW ENGINE INNODB STATUS语句中是相似的，innoDB监视器输出如下：
 
 ```mysql
-RECORD LOCKS space id 58 page no 3 n bits 72 index `PRIMARY` of table `test`.`t` 
+RECORD LOCKS space id 58 page no 3 n bits 72 index `PRIMARY` of table `test`.`t`
 trx id 10078 lock_mode X locks rec but not gap
 Record lock, heap no 2 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
  0: len 4; hex 8000000a; asc     ;;
@@ -127,7 +130,7 @@ InnoDB通过这样的方式执行行级锁定，当它查找或者扫描一个�
 对于一个下一键锁的事务数据展示和通过SHOW ENGINE INNODB STATUS语句中是相似的，innoDB监视器输出如下：
 
 ```mysql
-RECORD LOCKS space id 58 page no 3 n bits 72 index `PRIMARY` of table `test`.`t` 
+RECORD LOCKS space id 58 page no 3 n bits 72 index `PRIMARY` of table `test`.`t`
 trx id 10080 lock_mode X
 Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0
  0: len 8; hex 73757072656d756d; asc supremum;;

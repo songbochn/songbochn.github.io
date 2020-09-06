@@ -1,11 +1,12 @@
 ---
 title: 博客迁移到gitpages上(二)
+toc: true
 tags:
   - gitpages
   - domain
   - 域名
 categories:
-  - 博客
+  - 体验
 date: 2017-10-05 12:58:29
 ---
 

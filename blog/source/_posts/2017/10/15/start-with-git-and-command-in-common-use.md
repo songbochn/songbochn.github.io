@@ -1,9 +1,12 @@
 ---
-title: 常用git命令总结
+title: 「git学习计划」(一)常用命令
 date: 2017-10-15 20:57:44
-tags: 
+toc: true
+tags:
      - git
      - bash
+categories:
+    - 计划
 ---
 
 ### git简介
@@ -30,17 +33,17 @@ git config --global user.email 邮箱名字
 
 ### 常用命令
 
-#### git clone 
+#### git clone
 
 该命令就是将一个版本库拷贝下来。如下命令
 ```bash
-git clone (-b 分支名) (--depth=1) ssh://用户名@ip或者域名:端口号/地址xx.git 
+git clone (-b 分支名) (--depth=1) ssh://用户名@ip或者域名:端口号/地址xx.git
 ```
 括号内的可以不填,加上-b 分支名，表示克隆哪个分支，不填表示默认master分支。
 
 ---depth=1表示只克隆最近一次commit。 如果以后想用其他的可以使用git fetch --unshallow或者git pull --unshallow
 
-#### git add 
+#### git add
 
 git add 用于将文件添加到暂存区，可以选择性的添加需要的文件，git add . 表示添加当天前目录下的所有文件.
 
@@ -63,11 +66,11 @@ pull 相当于fetch+merge 完整命令为git pull orgin 远程分支名:本地�
 #### git diff
 git diff用于比较差异，接两个commit的编码表示比较两个提交的差异，接两个分支，表示比较两个分支的差异。
 在git add之前用git diff,在add之后用 git diff --cached
-####  git merge 
+####  git merge
 一般在提PR之前需要进行merge，防止提交合并的时候产生冲突，如果merge错了，可以使用git reset回退版本。
 #### git reset
 git reset --hard 后接commit的提交编码就可以了，编码不用写全，写6位就可以了。
-也可以使用git reset --hard HEAD  HEAD是当前版本，HEAD^ 表示往前在退一个版本，HEAD^^ 再往前推一个版本，往前再推的话可能会数不过来，就可以写成HEAD～100表示往前推100个版本。 
+也可以使用git reset --hard HEAD  HEAD是当前版本，HEAD^ 表示往前在退一个版本，HEAD^^ 再往前推一个版本，往前再推的话可能会数不过来，就可以写成HEAD～100表示往前推100个版本。
 #### git branch
 git branch用来查看分支，-r 即意为remote 查看远程法分支, -a 意为all 查看所有分支，git branch -D 接分支名，表示删除该本地分支。
 #### git checkout

@@ -1,12 +1,13 @@
 ---
 title: fullGC分析记录
+toc: true
 date: 2018-07-22 12:08:17
-tag: 
+tag:
 	- java
 	- jvm
 	- gc
-category:
-	- 技术总结
+categories:
+	- 体验
 ---
 在开发过程中发现平均几个小时就会发生一次fullGC,在fullgc的这段时间接口响应十分之慢，甚至会出现超时现象，因此要解决掉这种问题。以下是排查过程。
 #### jvm参数设置
@@ -26,7 +27,7 @@ category:
 - -XX:CMSInitiatingOccupancyFraction=80 老年代使用80% 就开始fullGC
 - -Xmn1024m 年轻代大小-XX:SurvivorRatio=8 Eden区与Survivor区的大小比值
 - -XX:MetaspaceSize=256m 永久代，初始值一定是2180710byte 扩容到 256m就fullgc,此后扩容一次gc一次
-- -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError 
+- -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError
 - -XX:ReservedCodeCacheSize=128m 这个参数主要设置codecache的大小，比如我们jit编译的代码都是放在codecache里的，所以codecache如果满了的话，那带来的问题就是无法再jit编译了，而且还会去优化。因此大家可能碰到这样的问题：cpu一直高，然后发现是编译线程一直高（系统运行到一定时期）-XX:InitialCodeCacheSize=128m 初始化-Xmx3g 最大堆大小-Xms3g 初始堆大小
 
 #### GC日志文件
@@ -51,7 +52,7 @@ Desired survivor size 53673984 bytes, new threshold 9 (max 15)
 - age   7:    6091736 bytes,   46327944 total
 - age   8:    5505400 bytes,   51833344 total
 - age   9:    5498208 bytes,   57331552 total
-: 914622K->83580K(943744K), 0.0676204 secs] 2588812K->1765017K(3040896K), 0.0678538 secs] [Times: user=0.45 sys=0.00, real=0.07 secs] 
+: 914622K->83580K(943744K), 0.0676204 secs] 2588812K->1765017K(3040896K), 0.0678538 secs] [Times: user=0.45 sys=0.00, real=0.07 secs]
 Heap after GC invocations=2694 (full 10):
 par new generation   total 943744K, used 83580K [0x0000000700000000, 0x0000000740000000, 0x0000000740000000)
 eden space 838912K,   0% used [0x0000000700000000, 0x0000000700000000, 0x0000000733340000)
@@ -61,18 +62,18 @@ concurrent mark-sweep generation total 2097152K, used 1681437K [0x00000007400000
 Metaspace       used 82793K, capacity 84248K, committed 84480K, reserved 1124352K
 class space    used 8521K, capacity 8836K, committed 8960K, reserved 1048576K
 }
-2018-06-27T10:30:04.025+0800: 132844.151: [GC (CMS Initial Mark) [1 CMS-initial-mark: 1681437K(2097152K)] 1766485K(3040896K), 0.0106641 secs] [Times: user=0.05 sys=0.00, real=0.01 secs] 
+2018-06-27T10:30:04.025+0800: 132844.151: [GC (CMS Initial Mark) [1 CMS-initial-mark: 1681437K(2097152K)] 1766485K(3040896K), 0.0106641 secs] [Times: user=0.05 sys=0.00, real=0.01 secs]
 2018-06-27T10:30:04.036+0800: 132844.162: [CMS-concurrent-mark-start]
-2018-06-27T10:30:04.069+0800: 132844.195: [CMS-concurrent-mark: 0.030/0.033 secs] [Times: user=0.16 sys=0.00, real=0.04 secs] 
+2018-06-27T10:30:04.069+0800: 132844.195: [CMS-concurrent-mark: 0.030/0.033 secs] [Times: user=0.16 sys=0.00, real=0.04 secs]
 2018-06-27T10:30:04.069+0800: 132844.195: [CMS-concurrent-preclean-start]
-2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-preclean: 0.006/0.006 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] 
+2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-preclean: 0.006/0.006 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
 2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-abortable-preclean-start]
- CMS: abort preclean due to time 2018-06-27T10:30:09.275+0800: 132849.401: [CMS-concurrent-abortable-preclean: 5.197/5.200 secs] [Times: user=5.99 sys=0.10, real=5.20 secs] 
-2018-06-27T10:30:09.276+0800: 132849.402: [GC (CMS Final Remark) [YG occupancy: 240189 K (943744 K)]132849.402: [Rescan (parallel) , 0.0363990 secs]132849.439: [weak refs processing, 0.0347831 secs]132849.473: [class unloading, 0.0227507 secs]132849.496: [scrub symbol table, 0.0075422 secs]132849.504: [scrub string table, 0.0013443 secs][1 CMS-remark: 1681437K(2097152K)] 1921626K(3040896K), 0.1050885 secs] [Times: user=0.34 sys=0.00, real=0.11 secs] 
+ CMS: abort preclean due to time 2018-06-27T10:30:09.275+0800: 132849.401: [CMS-concurrent-abortable-preclean: 5.197/5.200 secs] [Times: user=5.99 sys=0.10, real=5.20 secs]
+2018-06-27T10:30:09.276+0800: 132849.402: [GC (CMS Final Remark) [YG occupancy: 240189 K (943744 K)]132849.402: [Rescan (parallel) , 0.0363990 secs]132849.439: [weak refs processing, 0.0347831 secs]132849.473: [class unloading, 0.0227507 secs]132849.496: [scrub symbol table, 0.0075422 secs]132849.504: [scrub string table, 0.0013443 secs][1 CMS-remark: 1681437K(2097152K)] 1921626K(3040896K), 0.1050885 secs] [Times: user=0.34 sys=0.00, real=0.11 secs]
 2018-06-27T10:30:09.382+0800: 132849.508: [CMS-concurrent-sweep-start]
-2018-06-27T10:30:10.562+0800: 132850.688: [CMS-concurrent-sweep: 1.181/1.181 secs] [Times: user=1.40 sys=0.02, real=1.18 secs] 
+2018-06-27T10:30:10.562+0800: 132850.688: [CMS-concurrent-sweep: 1.181/1.181 secs] [Times: user=1.40 sys=0.02, real=1.18 secs]
 2018-06-27T10:30:10.562+0800: 132850.688: [CMS-concurrent-reset-start]
-2018-06-27T10:30:10.567+0800: 132850.693: [CMS-concurrent-reset: 0.005/0.005 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] 
+2018-06-27T10:30:10.567+0800: 132850.693: [CMS-concurrent-reset: 0.005/0.005 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
 {Heap before GC invocations=2694 (full 11):
  par new generation   total 943744K, used 922492K [0x0000000700000000, 0x0000000740000000, 0x0000000740000000)
   eden space 838912K, 100% used [0x0000000700000000, 0x0000000733340000, 0x0000000733340000)
@@ -92,7 +93,7 @@ Desired survivor size 53673984 bytes, new threshold 9 (max 15)
 - age   7:    7459240 bytes,   45737144 total
 - age   8:    6061064 bytes,   51798208 total
 - age   9:    5429624 bytes,   57227832 total
-: 922492K->90909K(943744K), 0.0349351 secs] 1007745K->181536K(3040896K), 0.0351277 secs] [Times: user=0.20 sys=0.00, real=0.03 secs] 
+: 922492K->90909K(943744K), 0.0349351 secs] 1007745K->181536K(3040896K), 0.0351277 secs] [Times: user=0.20 sys=0.00, real=0.03 secs]
 Heap after GC invocations=2695 (full 11):
  par new generation   total 943744K, used 90909K [0x0000000700000000, 0x0000000740000000, 0x0000000740000000)
   eden space 838912K,   0% used [0x0000000700000000, 0x0000000700000000, 0x0000000733340000)
@@ -121,7 +122,7 @@ Desired survivor size 53673984 bytes, new threshold 9 (max 15)
 - age   7:    7049544 bytes,   43244960 total
 - age   8:    7452280 bytes,   50697240 total
 - age   9:    6060952 bytes,   56758192 total
-: 929821K->74939K(943744K), 0.0370969 secs] 1020448K->170947K(3040896K), 0.0372984 secs] [Times: user=0.24 sys=0.00, real=0.04 secs] 
+: 929821K->74939K(943744K), 0.0370969 secs] 1020448K->170947K(3040896K), 0.0372984 secs] [Times: user=0.24 sys=0.00, real=0.04 secs]
 Heap after GC invocations=2696 (full 11):
  par new generation   total 943744K, used 74939K [0x0000000700000000, 0x0000000740000000, 0x0000000740000000)
   eden space 838912K,   0% used [0x0000000700000000, 0x0000000700000000, 0x0000000733340000)
@@ -141,41 +142,41 @@ Heap after GC invocations=2696 (full 11):
 下边逐字逐句分析这段日志：
 
 ```
-1.{Heap before GC invocations=2693 (full 10): 
+1.{Heap before GC invocations=2693 (full 10):
 
   在minorGC之前，已经执行了2693次GC，10次FullGC
 
-2. par new generation   total 943744K, used 914622K [0x0000000700000000, 0x0000000740000000, 0x0000000740000000)  
-  
-  使用ParNew垃圾收集器，年轻代共943744K,已使用914622K  //todo  
+2. par new generation   total 943744K, used 914622K [0x0000000700000000, 0x0000000740000000, 0x0000000740000000)
 
-3. eden space 838912K, 100% used [0x0000000700000000, 0x0000000733340000, 0x0000000733340000)  
-  
+  使用ParNew垃圾收集器，年轻代共943744K,已使用914622K  //todo
+
+3. eden space 838912K, 100% used [0x0000000700000000, 0x0000000733340000, 0x0000000733340000)
+
    eden区共有内存 838912k 使用率100%，//todo
 
 4. from space 104832K,  72% used [0x00000007399a0000, 0x000000073e38f9f8, 0x0000000740000000)
 
-    from survivor区总大小 104832k，使用率 72% 
-    
-5.  to   space 104832K,   0% used [0x0000000733340000, 0x0000000733340000, 0x00000007399a0000)     
-    to survivor区总大小 104832k，使用率 0% 
-    
+    from survivor区总大小 104832k，使用率 72%
+
+5.  to   space 104832K,   0% used [0x0000000733340000, 0x0000000733340000, 0x00000007399a0000)
+    to survivor区总大小 104832k，使用率 0%
+
 6. concurrent mark-sweep generation total 2097152K, used 1674190K [0x0000000740000000, 0x00000007c0000000, 0x00000007c0000000)
 
-    cms负责老年代垃圾回收，老年代共有2097152K的内存，已使用1674190K的内存 
-    
+    cms负责老年代垃圾回收，老年代共有2097152K的内存，已使用1674190K的内存
+
 7. Metaspace       used 82793K, capacity 84248K, committed 84480K, reserved 1124352K
 
     java8去掉了perm内存，用metaspace取代，关于这些参数，
-        
+
 8. class space    used 8521K, capacity 8836K, committed 8960K, reserved 1048576K9. 2018-06-27T10:30:03.956+0800: 132844.082: [GC (Allocation Failure) 132844.082: [ParNew
 
     时间点：GC原因：Allocation Failure  132844.082表示GC开始时间，相对于JVM启动时间的偏移量
-    
+
 9. Desired survivor size 53673984 bytes, new threshold 9 (max 15)
 
    这一句话非常关键，这里的意思是期望survivor的大小,53673984 bytes。新的晋升年龄为9，最大值为15。因为是复制-清理算法，也就是说，把eden和from的存活对象，复制到to的区域，其实to的接受生效范围是可以制定的，不指定，默认为一个survivor的50%，通过参数【-XX:TargetSurvivorRatio 】调整53673984 bytes就是上述一个survivor大小(104832K)的一半。那么这个有什么用？作用在于计算动态年龄，我期望放下这么多对象，那么多于大小的存活对象，我希望移到老年代，据此算出一个年龄，下次大于这个年龄的晋升到老年代。
-   
+
 10. - age   1:    9419072 bytes,    9419072 total
 
 		年龄为1（经历过一次youngGC）的存活对象大小为9419072 bytes, 截止到age 1 总共对象大小9419072 bytes;
@@ -189,7 +190,7 @@ Heap after GC invocations=2696 (full 11):
 		同上
 
 	- age   4:    4955944 bytes,   25688552 total
-		
+
 		同上
 
 	- age   5:    7069448 bytes,   32758000 total
@@ -207,30 +208,30 @@ Heap after GC invocations=2696 (full 11):
 	- age   8:    5505400 bytes,   51833344 total
 
 		同上
-		
+
 	- age   9:    5498208 bytes,   57331552 total
 
 		同上
 
-11.: 914622K->83580K(943744K), 0.0676204 secs] 2588812K->1765017K(3040896K), 0.0678538 secs] [Times: user=0.45 sys=0.00, real=0.07 secs] 
+11.: 914622K->83580K(943744K), 0.0676204 secs] 2588812K->1765017K(3040896K), 0.0678538 secs] [Times: user=0.45 sys=0.00, real=0.07 secs]
 
 年轻代共有从914622K回收到83580K，年轻代大小：943744K，花费时间0.0676204secs,  堆大小2588812K到1765017K，总共大小3040896K
 
-2018-06-27T10:30:04.025+0800: 132844.151: [GC (CMS Initial Mark) [1 CMS-initial-mark: 1681437K(2097152K)] 1766485K(3040896K), 0.0106641 secs] [Times: user=0.05 
-sys=0.00, real=0.01 secs] 
+2018-06-27T10:30:04.025+0800: 132844.151: [GC (CMS Initial Mark) [1 CMS-initial-mark: 1681437K(2097152K)] 1766485K(3040896K), 0.0106641 secs] [Times: user=0.05
+sys=0.00, real=0.01 secs]
 2018-06-27T10:30:04.036+0800: 132844.162: [CMS-concurrent-mark-start]
-2018-06-27T10:30:04.069+0800: 132844.195: [CMS-concurrent-mark: 0.030/0.033 secs] [Times: user=0.16 sys=0.00, real=0.04 secs] 
+2018-06-27T10:30:04.069+0800: 132844.195: [CMS-concurrent-mark: 0.030/0.033 secs] [Times: user=0.16 sys=0.00, real=0.04 secs]
 2018-06-27T10:30:04.069+0800: 132844.195: [CMS-concurrent-preclean-start]
-2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-preclean: 0.006/0.006 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] 
-2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-abortable-preclean-start] 
-CMS: abort preclean due to time 2018-06-27T10:30:09.275+0800: 132849.401: [CMS-concurrent-abortable-preclean: 5.197/5.200 secs] [Times: user=5.99 sys=0.10, real=5.20 secs] 
-2018-06-27T10:30:09.276+0800: 132849.402: [GC (CMS Final Remark) [YG occupancy: 240189 K (943744 K)]132849.402: [Rescan (parallel) , 0.0363990 secs]132849.439: [weak 
-refs processing, 0.0347831 secs]132849.473: [class unloading, 0.0227507 secs]132849.496: [scrub symbol table, 0.0075422 secs]132849.504: [scrub string table, 0.0013443 
-secs][1 CMS-remark: 1681437K(2097152K)] 1921626K(3040896K), 0.1050885 secs] [Times: user=0.34 sys=0.00, real=0.11 secs] 
+2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-preclean: 0.006/0.006 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+2018-06-27T10:30:04.076+0800: 132844.201: [CMS-concurrent-abortable-preclean-start]
+CMS: abort preclean due to time 2018-06-27T10:30:09.275+0800: 132849.401: [CMS-concurrent-abortable-preclean: 5.197/5.200 secs] [Times: user=5.99 sys=0.10, real=5.20 secs]
+2018-06-27T10:30:09.276+0800: 132849.402: [GC (CMS Final Remark) [YG occupancy: 240189 K (943744 K)]132849.402: [Rescan (parallel) , 0.0363990 secs]132849.439: [weak
+refs processing, 0.0347831 secs]132849.473: [class unloading, 0.0227507 secs]132849.496: [scrub symbol table, 0.0075422 secs]132849.504: [scrub string table, 0.0013443
+secs][1 CMS-remark: 1681437K(2097152K)] 1921626K(3040896K), 0.1050885 secs] [Times: user=0.34 sys=0.00, real=0.11 secs]
 2018-06-27T10:30:09.382+0800: 132849.508: [CMS-concurrent-sweep-start]
-2018-06-27T10:30:10.562+0800: 132850.688: [CMS-concurrent-sweep: 1.181/1.181 secs] [Times: user=1.40 sys=0.02, real=1.18 secs] 
+2018-06-27T10:30:10.562+0800: 132850.688: [CMS-concurrent-sweep: 1.181/1.181 secs] [Times: user=1.40 sys=0.02, real=1.18 secs]
 2018-06-27T10:30:10.562+0800: 132850.688: [CMS-concurrent-reset-start]
-2018-06-27T10:30:10.567+0800: 132850.693: [CMS-concurrent-reset: 0.005/0.005 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] 
+2018-06-27T10:30:10.567+0800: 132850.693: [CMS-concurrent-reset: 0.005/0.005 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
 关于CMS日志分析，参考下面链接
 ```
 #### GC日志结论
@@ -359,7 +360,7 @@ youngGC频率：
 撷取2018-06-20中午12点和下午15点的数据来看：
 
 12点数据
-![12](https://res.cloudinary.com/dataset/image/upload/v1532242641/image/gcfirst.png) 
+![12](https://res.cloudinary.com/dataset/image/upload/v1532242641/image/gcfirst.png)
                                                                                15点数据
 ![15](https://res.cloudinary.com/dataset/image/upload/v1532242641/image/gcsecond.png)
 可见60s内youngGC频率非常之高。

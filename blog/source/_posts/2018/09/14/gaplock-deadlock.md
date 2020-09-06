@@ -1,12 +1,13 @@
 ---
 title: mysql-gap锁引发死锁原因探寻
+toc: true
 date: 2018-09-14 14:56:18
 tag:
 	- mysql
 	- deadlock
 	- lock
-catergory:
-	- 数据库
+categories:
+	- 体验
 ---
 
 起因是同事描述发现一起mysql死锁现象，于是饶有兴趣的排查起来,将sql中无关值或字段用xxx代替
